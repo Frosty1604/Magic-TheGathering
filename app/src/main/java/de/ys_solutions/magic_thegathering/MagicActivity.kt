@@ -67,16 +67,16 @@ class MagicActivity : AppCompatActivity() {
             }
         })
 
-        cardsRepository.loadCard("1", callback = object : CardsDataSource.LoadCardCallback {
-            override fun onCardLoaded(card: Card) {
-                Log.d("Test", "ID: " + card.multiverseid + "; Name: " + card.name + "\n")
-            }
+        /* cardsRepository.loadCard("1", callback = object : CardsDataSource.LoadCardCallback {
+             override fun onCardLoaded(card: Card) {
+                 Log.d("Test", "ID: " + card.multiverseid + "; Name: " + card.name + "\n")
+             }
 
-            override fun onDataNotAvailable() {
-                Toast.makeText(applicationContext, "Error loading card", Toast.LENGTH_SHORT).show()
-            }
+             override fun onDataNotAvailable() {
+                 Toast.makeText(applicationContext, "Error loading card", Toast.LENGTH_SHORT).show()
+             }
 
-        })
+         })*/
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away

@@ -25,7 +25,8 @@ class NetModule(internal val baseUrl: String) {
     @Provides
     @Singleton
     internal fun providesMoshi(): Moshi {
-        return Moshi.Builder().build()
+        return Moshi.Builder()
+                .build()
     }
 
     @Provides
