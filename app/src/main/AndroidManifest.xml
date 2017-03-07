@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.ys_solutions.magic_thegathering">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
@@ -10,10 +12,11 @@
         android:smallScreens="true" />
 
     <application
+        android:label="@string/app_name"
+        android:name=".MagicApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:isGame="true"
-        android:label="@string/app_name"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity

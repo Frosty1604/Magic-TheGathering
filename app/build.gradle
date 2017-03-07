@@ -5,31 +5,143 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "de.ys_solutions.magic_thegathering"
+        applicationId "de.ys_solutions.magic_the_gathering"
         minSdkVersion 21
         targetSdkVersion 25
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        release {
+//            storeFile file(project.property("_storeFile"))
+//            storePassword project.property("_storePassword")
+//            keyAlias project.property("_keyAlias")
+//            keyPassword project.property("_keyPassword")
+        }
+        debug {
+        }
+    }
+
     buildTypes {
         release {
+            signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            versionNameSuffix ""
+            zipAlignEnabled true
+            shrinkResources true
+            buildConfigField("boolean", "LOG_DEBUG", "false")
+        }
+        debug {
+//            signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            versionNameSuffix "-debug"
+            zipAlignEnabled false
+            shrinkResources false
+            buildConfigField("boolean", "LOG_DEBUG", "true")
         }
     }
 }
 
+// called every time gradle gets executed, takes the native dependencies of
+// the natives configuration, and extracts them to the proper libs/ folders
+// so they get packed with the APK.
+task copyAndroidNatives() {
+    file("libs/armeabi/").mkdirs();
+    file("libs/armeabi-v7a/").mkdirs();
+    file("libs/arm64-v8a/").mkdirs();
+    file("libs/x86_64/").mkdirs();
+    file("libs/x86/").mkdirs();
+
+    configurations.natives.files.each { jar ->
+        def outputDir = null
+        if(jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
+        if(jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
+        if(jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
+        if(jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
+        if(jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
+        if(outputDir != null) {
+            copy {
+                from zipTree(jar)
+                into outputDir
+                include "*.so"
+            }
+        }
+    }
+}
+
+task run(type: Exec) {
+    def path
+    def localProperties = project.file("../local.properties")
+    if (localProperties.exists()) {
+        Properties properties = new Properties()
+        localProperties.withInputStream { instr ->
+            properties.load(instr)
+        }
+        def sdkDir = properties.getProperty('sdk.dir')
+        if (sdkDir) {
+            path = sdkDir
+        } else {
+            path = "$System.env.ANDROID_HOME"
+        }
+    } else {
+        path = "$System.env.ANDROID_HOME"
+    }
+
+    def adb = path + "/platform-tools/adb"
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'de.ys_solutions.magic_thegathering/de.ys_solutions.magic_thegathering.AndroidLauncher'
+}
+
+// sets up the Android Idea project, using the old Ant based build.
+/*idea {
+    module {
+        sourceDirs += file("src");
+        scopes = [ COMPILE: [plus:[project.configurations.compile]]]
+
+        iml {
+            withXml {
+                def node = it.asNode()
+                def builder = NodeBuilder.newInstance();
+                builder.current = node;
+                builder.component(name: "FacetManager") {
+                    facet(type: "android", name: "Android") {
+                        configuration {
+                            option(name: "UPDATE_PROPERTY_FILES", value:"true")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}*/
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    testCompile 'junit:junit:4.12'
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:${kotlin_version}"
+
+    // Android Support Libraries
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:support-v4:25.2.0'
-    testCompile 'junit:junit:4.12'
+    // JetBrains Kotlin Plugin
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-}
-repositories {
-    mavenCentral()
+    // Retrofit 2
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
+    compile 'com.squareup.retrofit2:converter-moshi:2.2.0'
+    // OkHttp
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    // Dagger 2
+    compile "com.google.dagger:dagger:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+//    provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    // Stetho
+    compile 'com.facebook.stetho:stetho:1.4.2'
 }

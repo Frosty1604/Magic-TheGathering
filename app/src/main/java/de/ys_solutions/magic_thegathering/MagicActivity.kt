@@ -3,15 +3,23 @@ package de.ys_solutions.magic_thegathering
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
+import android.widget.Toast
+import de.ys_solutions.magic_thegathering.data.model.Card
+import de.ys_solutions.magic_thegathering.data.source.CardsDataSource
+import de.ys_solutions.magic_thegathering.data.source.CardsRepository
+import javax.inject.Inject
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 class MagicActivity : AppCompatActivity() {
+    @Inject
+    lateinit var cardsRepository: CardsRepository
+
     private val mHideHandler = Handler()
     private var mContentView: View? = null
     private val mHidePart2Runnable = Runnable {
@@ -36,6 +44,8 @@ class MagicActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_fullscreen)
 
+        (application as MagicApp).netComponent.inject(this)
+
         mVisible = true
         mContentView = findViewById(R.id.fullscreen_content)
 
@@ -44,6 +54,29 @@ class MagicActivity : AppCompatActivity() {
         mContentView!!.setOnClickListener {
             //toggle();
         }
+
+        cardsRepository.loadAllCards(callback = object : CardsDataSource.LoadAllCardsCallback {
+            override fun onCardsLoaded(cards: List<Card>) {
+                for (card : Card     in cards) {
+                    Log.d("Test", "ID: " + card.multiverseid + "; Name: " + card.name + "\n")
+                }
+            }
+
+            override fun onDataNotAvailable() {
+                Toast.makeText(applicationContext, "Error loading cards", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        cardsRepository.loadCard("1", callback = object : CardsDataSource.LoadCardCallback {
+            override fun onCardLoaded(card: Card) {
+                Log.d("Test", "ID: " + card.multiverseid + "; Name: " + card.name + "\n")
+            }
+
+            override fun onDataNotAvailable() {
+                Toast.makeText(applicationContext, "Error loading card", Toast.LENGTH_SHORT).show()
+            }
+
+        })
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
