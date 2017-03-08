@@ -57,6 +57,8 @@ class MagicActivity : AppCompatActivity() {
 
         cardsRepository.loadAllCards(callback = object : CardsDataSource.LoadAllCardsCallback {
             override fun onCardsLoaded(cards: List<Card>) {
+                if (cards.isEmpty()) return
+
                 for (card : Card     in cards) {
                     Log.d("Test", "ID: " + card.multiverseid + "; Name: " + card.name + "\n")
                 }

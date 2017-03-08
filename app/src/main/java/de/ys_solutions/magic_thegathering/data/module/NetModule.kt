@@ -4,6 +4,7 @@ import android.content.Context
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
+import de.ys_solutions.magic_thegathering.BuildConfig
 import de.ys_solutions.magic_thegathering.data.api.MagicApi
 import de.ys_solutions.magic_thegathering.util.StethoInterceptor
 import okhttp3.Cache
@@ -32,10 +33,15 @@ class NetModule(internal val baseUrl: String) {
     @Provides
     @Singleton
     internal fun providesOkHttpClient(cache: Cache): OkHttpClient {
-        return OkHttpClient.Builder()
-                .cache(cache)
-                .addNetworkInterceptor(StethoInterceptor())
-                .build()
+        val builder: OkHttpClient.Builder = OkHttpClient.Builder()
+        builder.cache(cache)
+        if (BuildConfig.DEBUG) {
+            builder.addNetworkInterceptor(StethoInterceptor())
+        }
+        builder.build()
+
+        return builder.build()
+
     }
 
     @Provides
