@@ -3,8 +3,10 @@ package de.ys_solutions.magic_thegathering.data.source;
 import de.ys_solutions.magic_thegathering.data.api.MagicApi;
 import de.ys_solutions.magic_thegathering.data.model.Card;
 import de.ys_solutions.magic_thegathering.data.model.Cards;
+import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import org.jetbrains.annotations.NotNull;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -24,8 +26,10 @@ public class CardsRepository implements CardsDataSource {
   }
 
   @Override
-  public void loadAllCards(@Nonnull final LoadAllCardsCallback callback) {
-    Call<Cards> call = magicApi.getAllCards();
+  public void loadAllCards(@NotNull Map<String, String> queryParams,
+      @NotNull final LoadAllCardsCallback callback) {
+
+    Call<Cards> call = magicApi.getAllCards(queryParams);
 
     call.enqueue(new Callback<Cards>() {
       @Override

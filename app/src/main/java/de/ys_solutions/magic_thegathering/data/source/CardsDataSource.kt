@@ -9,7 +9,7 @@ import de.ys_solutions.magic_thegathering.data.model.CardType
 
 internal interface CardsDataSource {
 
-    fun loadAllCards(callback: LoadAllCardsCallback)
+    fun loadAllCards(queryParams: Map<String, String>, callback: LoadAllCardsCallback)
 
     fun loadCard(multiverseId: String, callback: LoadCardCallback)
 

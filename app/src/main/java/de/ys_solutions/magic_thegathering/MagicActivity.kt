@@ -55,7 +55,11 @@ class MagicActivity : AppCompatActivity() {
             //toggle();
         }
 
-        cardsRepository.loadAllCards(callback = object : CardsDataSource.LoadAllCardsCallback {
+        val queryParams: Map<String, String> = hashMapOf("page" to "10",
+                "pageSize" to "100",
+                "orderBy" to "multiverseid")
+
+        cardsRepository.loadAllCards(queryParams, callback = object : CardsDataSource.LoadAllCardsCallback {
             override fun onCardsLoaded(cards: List<Card>) {
                 if (cards.isEmpty()) return
 
@@ -67,18 +71,8 @@ class MagicActivity : AppCompatActivity() {
             override fun onDataNotAvailable() {
                 Toast.makeText(applicationContext, "Error loading cards", Toast.LENGTH_SHORT).show()
             }
+
         })
-
-        /* cardsRepository.loadCard("1", callback = object : CardsDataSource.LoadCardCallback {
-             override fun onCardLoaded(card: Card) {
-                 Log.d("Test", "ID: " + card.multiverseid + "; Name: " + card.name + "\n")
-             }
-
-             override fun onDataNotAvailable() {
-                 Toast.makeText(applicationContext, "Error loading card", Toast.LENGTH_SHORT).show()
-             }
-
-         })*/
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
