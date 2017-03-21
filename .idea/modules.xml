@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Magic-The Gathering.iml" filepath="$PROJECT_DIR$/Magic-The Gathering.iml" />
       <module fileurl="file://$PROJECT_DIR$/Magic-TheGathering.iml" filepath="$PROJECT_DIR$/Magic-TheGathering.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />

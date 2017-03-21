@@ -15,7 +15,8 @@ buildscript {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
-        kotlin_version = '1.1.0'
+        kotlin_version = '1.1.1'
+        anko_version = '0.9.1'
         dagger_version = '2.10-rc2'
     }
 
